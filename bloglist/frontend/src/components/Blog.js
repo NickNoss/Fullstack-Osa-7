@@ -7,23 +7,28 @@ const Blog = ({ blog, like, canRemove, remove }) => {
   const style = {
     marginBottom: 2,
     padding: 5,
-    borderStyle: 'solid'
+    borderStyle: 'solid',
   }
 
   return (
-    <div style={style} className='blog'>
+    <div style={style} className="blog">
       {blog.title} {blog.author}
       <button onClick={() => setVisible(!visible)}>
         {visible ? 'hide' : 'show'}
       </button>
-      {visible&&
+      {visible && (
         <div>
-          <div> <a href={blog.url}> {blog.url}</a> </div>
-          <div>likes {blog.likes} <button onClick={like}>like</button></div>
+          <div>
+            {' '}
+            <a href={blog.url}> {blog.url}</a>{' '}
+          </div>
+          <div>
+            likes {blog.likes} <button onClick={like}>like</button>
+          </div>
           <div>{blog.user && blog.user.name}</div>
-          {canRemove&&<button onClick={remove}>delete</button>}
+          {canRemove && <button onClick={remove}>delete</button>}
         </div>
-      }
+      )}
     </div>
   )
 }
@@ -36,8 +41,8 @@ Blog.propTypes = {
     title: PropTypes.string,
     author: PropTypes.string,
     url: PropTypes.string,
-    likes: PropTypes.number
-  })
+    likes: PropTypes.number,
+  }),
 }
 
 export default Blog

@@ -19,7 +19,7 @@ const LoginForm = ({ onLogin }) => {
           <input
             value={username}
             onChange={({ target }) => setUsername(target.value)}
-            id='username'
+            id="username"
           />
         </div>
         <div>

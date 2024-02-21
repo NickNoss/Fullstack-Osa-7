@@ -13,7 +13,7 @@ describe('NewBlog', () => {
     const input = {
       title: 'Goto considered useful',
       author: 'Edsger Dijkstra',
-      url: 'acm.com/goto'
+      url: 'acm.com/goto',
     }
 
     const user = userEvent.setup()

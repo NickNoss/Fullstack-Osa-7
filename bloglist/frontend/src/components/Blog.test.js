@@ -10,7 +10,7 @@ describe('Blog', () => {
     title: 'Goto considered harmful',
     author: 'Edsger Dijkstra',
     url: 'google.com',
-    likes: 1
+    likes: 1,
   }
 
   const likeHandler = jest.fn()
@@ -22,7 +22,7 @@ describe('Blog', () => {
         remove={jest.fn()}
         canRemove={true}
         like={likeHandler}
-      />
+      />,
     )
   })
 

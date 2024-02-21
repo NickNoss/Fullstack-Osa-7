@@ -1,4 +1,4 @@
-const { defineConfig } = require("cypress")
+const { defineConfig } = require('cypress')
 
 module.exports = defineConfig({
   e2e: {
@@ -7,7 +7,7 @@ module.exports = defineConfig({
     },
     baseUrl: 'http://localhost:3000',
     env: {
-      BACKEND: 'http://localhost:3003/api'
-    }
+      BACKEND: 'http://localhost:3003/api',
+    },
   },
 })
