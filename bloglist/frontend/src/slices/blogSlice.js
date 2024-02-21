@@ -15,10 +15,14 @@ const blogSlice = createSlice({
         setBlogs(state, action) {
             return action.payload
         },
+        updateLike(state, action) {
+            const updatedBlog = action.payload
+            return state.map(b => b.id === updatedBlog.id ? updatedBlog : b)
+        }
     }
 })
 
-export const { appendBlog, setBlogs, removeBlog } = blogSlice.actions
+export const { appendBlog, setBlogs, removeBlog, updateLike } = blogSlice.actions
 export default blogSlice.reducer
 
 export const initializeBlogs = () => {
@@ -41,18 +45,24 @@ export const createBlog = (newBlog) => {
 }
 
 export const deleteBlog = (id) => {
-    return async (dispatch) => {
+    return async dispatch => {
       try {
-        const status = await blogService.deleteBlog(id)
+        const status = await blogService.remove(id)
         if (status !== 204) {
           dispatch(expireNotification("Unauthorized", true))
           return
         }
-        
-        dispatch(expireNotification("Blog successfully deleted", false))
         dispatch(removeBlog(id))
       } catch (error) {
         dispatch(expireNotification("Error deleting blog", true))
       }
     }
   }
+
+export const handleLike = (id) => {
+    return async (dispatch, getState) => {
+        const blogToLike = getState().blogs.find((a) => a.id === id)
+        const updatedBlog = await blogService.putLike(blogToLike.id, blogToLike)
+        dispatch(updateLike(updatedBlog))
+    }
+}

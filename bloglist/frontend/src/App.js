@@ -11,7 +11,7 @@ import Togglable from './components/Togglable'
 
 import { expireNotification } from './slices/notificationSlice'
 import { useDispatch, useSelector } from 'react-redux'
-import {initializeBlogs, setBlogs } from './slices/blogSlice'
+import { initializeBlogs, deleteBlog, handleLike } from './slices/blogSlice'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -46,11 +46,9 @@ const App = () => {
     dispatch(expireNotification('Logged out', false))
   }
 
-  const like = async (blog) => {
-    const blogToUpdate = { ...blog, likes: blog.likes + 1, user: blog.user.id }
-    const updatedBlog = await blogService.update(blogToUpdate)
-    dispatch(expireNotification(`You liked ${blog.title} by ${blog.author}`, false))
-    setBlogs(blogs.map((b) => (b.id === blog.id ? updatedBlog : b)))
+  const like = async (id) => {
+    dispatch(handleLike(id))
+    dispatch(expireNotification('You liked a blog', false))
   }
 
   const remove = async (blog) => {
@@ -58,9 +56,8 @@ const App = () => {
       `Sure you want to remove '${blog.title}' by ${blog.author}`,
     )
     if (ok) {
-      await blogService.remove(blog.id)
+      dispatch(deleteBlog(blog.id))
       dispatch(expireNotification(`You removed ${blog.title} by ${blog.author}`, false))
-      setBlogs(blogs.filter((b) => b.id !== blog.id))
     }
   }
 
@@ -94,7 +91,7 @@ const App = () => {
           <Blog
             key={blog.id}
             blog={blog}
-            like={() => like(blog)}
+            like={() => like(blog.id)}
             canRemove={
               user && blog.user && blog.user.username === user.username
             }
