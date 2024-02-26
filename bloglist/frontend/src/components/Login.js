@@ -1,12 +1,27 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { handleLogin } from '../slices/userSlice'
+import { useDispatch } from 'react-redux'
+import { setUser } from '../slices/userSlice'
 
-const LoginForm = ({ login }) => {
+const LoginForm = () => {
+  const dispatch = useDispatch()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
+  useEffect(() => {
+    const user = window.localStorage.getItem('user')
+    if (user) {
+      dispatch(setUser(JSON.parse(user)))
+    } else {
+      dispatch(setUser(null))
+    }
+  }, [dispatch])
+
   const handleSubmit = async (event) => {
     event.preventDefault()
-    await login(username, password)
+    dispatch(handleLogin(username, password))
+    setUsername('')
+    setPassword('')
   }
 
   return (

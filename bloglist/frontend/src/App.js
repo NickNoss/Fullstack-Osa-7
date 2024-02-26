@@ -1,50 +1,28 @@
-import { useState, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import Blog from './components/Blog'
-import blogService from './services/blogs'
-import loginService from './services/login'
-import storageService from './services/storage'
 
 import LoginForm from './components/Login'
 import NewBlog from './components/BlogForm'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
+import storageService from './services/storage'
 
 import { expireNotification } from './slices/notificationSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { initializeBlogs, deleteBlog, handleLike } from './slices/blogSlice'
+import { handleLogout, initializeUser } from './slices/userSlice'
 
 const App = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
+    dispatch(initializeUser())
     dispatch(initializeBlogs())
   }, [dispatch])
   const blogs = useSelector((state) => state.blogs)
-  const [user, setUser] = useState('')
   const blogFormRef = useRef()
 
-  useEffect(() => {
-    const user = storageService.loadUser()
-    setUser(user)
-  }, [])
-
-
-  const login = async (username, password) => {
-    try {
-      const user = await loginService.login({ username, password })
-      setUser(user)
-      storageService.saveUser(user)
-      dispatch(expireNotification(`Welcome ${user.name}`, false))
-    } catch (e) {
-      dispatch(expireNotification('wrong username or password', true))
-    }
-  }
-
-  const logout = async () => {
-    setUser(null)
-    storageService.removeUser()
-    dispatch(expireNotification('Logged out', false))
-  }
+  const user = useSelector((state) => state.login)
 
   const like = async (id) => {
     dispatch(handleLike(id))
@@ -61,12 +39,12 @@ const App = () => {
     }
   }
 
-  if (!user) {
+  if (!user || !user.token) {
     return (
       <div>
         <h2>log in to application</h2>
         <Notification />
-        <LoginForm login={login} />
+        <LoginForm />
       </div>
     )
   }
@@ -80,7 +58,7 @@ const App = () => {
       {user && (
         <div>
           {user.name} logged in
-          <button onClick={logout}>logout</button>
+          <button onClick={() => dispatch(handleLogout())}>logout</button>
         </div>
       )}
       <Togglable buttonLabel="new blog" ref={blogFormRef}>
